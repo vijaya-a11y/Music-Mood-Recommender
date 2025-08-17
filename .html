@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Mood Recommender</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🎶 Music Mood Recommender</h1>
+
+  <!-- Language Selection -->
+  <div class="controls">
+    <h4><label for="languageSelect">Choose Language:</label></h4>
+    <select id="languageSelect">
+      <option value="English">English</option>
+      <option value="Hindi">Hindi</option>
+      <option value="Telugu">Telugu</option>
+      <option value="Tamil">Tamil</option>
+      <option value="Spanish">Spanish</option>
+      <option value="Korean">Korean</option>
+      <option value="Japanese">Japanese</option>
+      <option value="French">French</option>
+    </select>
+  </div>
+
+  <!-- Mood Buttons (Spotify style) -->
+  <div class="mood-container">
+    <button onclick="showPlaylist('Happy')">
+      <img src="https://tse2.mm.bing.net/th/id/OIP.FLbgmAFZ0UxnL3nDfLMBxAHaE8?pid=Api&P=0&h=180" alt="Happy Mood">
+      <div>Happy</div>
+    </button>
+    <button onclick="showPlaylist('Sad')">
+      <img src="https://tse1.mm.bing.net/th/id/OIP.4J-3bQmkGf94sYWi3XF0PQHaFh?pid=Api&P=0&h=180" alt="Sad Mood">
+      <div>Sad</div>
+    </button>
+    <button onclick="showPlaylist('Relax')">
+      <img src="https://tse3.mm.bing.net/th/id/OIP.H7t3R_w_JuG-bQPbnFC7rAHaE8?pid=Api&P=0&h=180" alt="Relax Mood">
+      <div>Relax</div>
+    </button>
+    <button onclick="showPlaylist('Energetic')">
+      <img src="https://tse4.mm.bing.net/th/id/OIP.53PbLh3FpKIibflYP-IE3QHaE7?pid=Api&P=0&h=180" alt="Energetic Mood">
+      <div>Energetic</div>
+    </button>
+    <button onclick="showPlaylist('Romantic')">
+      <img src="https://tse4.mm.bing.net/th/id/OIP.F8fKBfPkKMJXY4wmv1DN_gHaEK?pid=Api&P=0&h=180" alt="Romantic Mood">
+      <div>Romantic</div>
+    </button>
+    <button onclick="showPlaylist('Focus')">
+      <img src="https://tse3.mm.bing.net/th/id/OIP.O39kkUMkqzo9MTWv2hsxBQHaEK?pid=Api&P=0&h=180" alt="Focus Mood">
+      <div>Focus</div>
+    </button>
+    <button onclick="showPlaylist('Party')">
+      <img src="https://tse3.mm.bing.net/th/id/OIP.FcgWtQqA4_rPM629XGvSggHaEK?pid=Api&P=0&h=180 alt="Party Mood">
+      <div>Party</div>
+    </button>
+    <button onclick="showPlaylist('Chill')">
+      <img src="https://tse1.mm.bing.net/th/id/OIP.4qc_1i1C5nBbdiu_fPhGPAHaEK?pid=Api&P=0&h=180" alt="Chill Mood">
+      <div>Chill</div>
+    </button>
+    <button onclick="showPlaylist('Angry')">
+      <img src="https://tse4.mm.bing.net/th/id/OIP.M1tagY3hKdrNXARY3okbkwHaD4?pid=Api&P=0&h=180" alt="Angry Mood">
+      <div>Angry</div>
+    </button>
+    <button onclick="showPlaylist('Sleepy')">
+      <img src="https://tse3.mm.bing.net/th/id/OIP.3GPTzpLHViChraFzb7-LJgHaHa?pid=Api&P=0&h=180" alt="Sleepy Mood">
+      <div>Sleepy</div>
+    </button>
+  </div>
+
+  <!-- Playlist Display -->
+  <div id="playlist" class="playlist-box"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
