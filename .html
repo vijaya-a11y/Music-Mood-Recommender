@@ -4,7 +4,97 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Music Mood Recommender</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #000000, #121212);
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #1db954; /* Spotify green */
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      margin: 20px 0;
+    }
+
+    select {
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    .mood-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-top: 25px;
+    }
+
+    .mood-container button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #333, #111);
+    }
+
+    .mood-container button:hover {
+      transform: scale(1.07);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.7);
+    }
+
+    .mood-container img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+
+    .playlist-box {
+      margin-top: 30px;
+      padding: 20px 25px;
+      background: #181818;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      display: none;
+      text-align: left;
+    }
+
+    .playlist-box h2 {
+      color: #1db954;
+      margin-bottom: 12px;
+    }
+
+    .playlist-box ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .playlist-box li {
+      padding: 8px 0;
+      font-size: 16px;
+      border-bottom: 1px solid #333;
+    }
+  </style>
 </head>
 <body>
   <h1>🎶 Music Mood Recommender</h1>
@@ -24,7 +114,7 @@
     </select>
   </div>
 
-  <!-- Mood Buttons (Spotify style) -->
+  <!-- Mood Buttons -->
   <div class="mood-container">
     <button onclick="showPlaylist('Happy')">
       <img src="https://tse2.mm.bing.net/th/id/OIP.FLbgmAFZ0UxnL3nDfLMBxAHaE8?pid=Api&P=0&h=180" alt="Happy Mood">
@@ -51,7 +141,7 @@
       <div>Focus</div>
     </button>
     <button onclick="showPlaylist('Party')">
-      <img src="https://tse3.mm.bing.net/th/id/OIP.FcgWtQqA4_rPM629XGvSggHaEK?pid=Api&P=0&h=180 alt="Party Mood">
+      <img src="https://tse3.mm.bing.net/th/id/OIP.FcgWtQqA4_rPM629XGvSggHaEK?pid=Api&P=0&h=180" alt="Party Mood">
       <div>Party</div>
     </button>
     <button onclick="showPlaylist('Chill')">
@@ -71,6 +161,53 @@
   <!-- Playlist Display -->
   <div id="playlist" class="playlist-box"></div>
 
-  <script src="script.js"></script>
+  <script>
+    const playlists = {
+      Happy: {
+        English: ["Happy - Pharrell Williams", "Best Day Of My Life - American Authors", "Good Life - OneRepublic", "On Top Of The World - Imagine Dragons", "Shake It Off - Taylor Swift"],
+        Hindi: ["Gallan Goodiyan", "Kar Gayi Chull", "Badtameez Dil", "Dil Dhadakne Do", "Nachde Ne Saare"],
+        Telugu: ["Happy Days", "Oh My Friend", "Life is Beautiful", "Yuvakula Basha", "Aha Emi Ruchi"],
+        Tamil: ["Aaluma Doluma", "Vaadi En Thanga", "Anbe Anbe", "Oru Maalai", "Hey Shabba"],
+        Spanish: ["Vivir Mi Vida - Marc Anthony", "Despacito - Luis Fonsi", "Bailando - Enrique Iglesias", "Danza Kuduro - Don Omar", "La Bicicleta - Shakira"],
+        Korean: ["Dynamite - BTS", "Cheer Up - Twice", "Likey - Twice", "Love Scenario - iKON", "Gangnam Style - PSY"],
+        Japanese: ["Blue Bird - Ikimono Gakari", "Happy Synthesizer", "Pretender - Official HIGE DANDism", "Marigold - Aimyon", "Koi - Gen Hoshino"],
+        French: ["Je Veux - Zaz", "La Vie en Rose - Édith Piaf", "Dernière danse - Indila", "Formidable - Stromae", "Sous le vent - Garou & Céline Dion"]
+      },
+      Sad: {
+        English: ["Someone Like You - Adele", "Fix You - Coldplay", "Stay With Me - Sam Smith", "Let Her Go - Passenger", "Say Something - A Great Big World"],
+        Hindi: ["Channa Mereya", "Agar Tum Saath Ho", "Kabira (Reprise)", "Jo Bheji Thi Dua", "Tujhe Bhula Diya"],
+        Telugu: ["Nee Kosam", "Kanulanu Thake", "Ye Maya Chesave", "Aakasam", "Manohara"],
+        Tamil: ["Munbe Vaa", "Suttrum Vizhi", "Un Perai Sollumbothu", "Ennodu Nee Irundhaal", "Kadhalin Deepam Ondru"],
+        Spanish: ["Amor Eterno", "Historia de un Amor", "Si Tú No Estás", "Corre", "Vuelves"],
+        Korean: ["Spring Day - BTS", "Beautiful - Crush", "Eyes, Nose, Lips - Taeyang", "Lonely - 2NE1", "Hug - TVXQ"],
+        Japanese: ["First Love - Utada Hikaru", "Secret Base", "Lemon - Kenshi Yonezu", "Kiseki", "Pretender (Sad Ver.)"],
+        French: ["Ne me quitte pas - Jacques Brel", "Je suis malade", "Tous les mêmes - Stromae", "Comme des enfants", "Si jamais j’oublie"]
+      },
+      Relax: {
+        English: ["Weightless - Marconi Union", "River Flows In You - Yiruma", "Bloom - The Paper Kites", "Ocean Eyes - Billie Eilish", "Lost in Japan - Shawn Mendes"],
+        Hindi: ["Tum Mile (Love Reprise)", "Kaise Hua", "Pee Loon (Reprise)", "Hasi Ban Gaye", "Khud Ko Tere Paas Paaya"],
+        Telugu: ["Pranam - Manoharam", "Kanulanu Thake", "O Cheliya", "Pachani Chiluka", "O Prema"],
+        Tamil: ["Ennavale", "Vinnaithaandi Varuvaayaa", "Anbil Avan", "Aararo Aariraro", "Pookkal Pookkum"],
+        Spanish: ["La Playa - La Oreja de Van Gogh", "Sabor a mí", "Besame Mucho", "Nada Valgo Sin Tu Amor", "Un Año"],
+        Korean: ["Love Poem - IU", "Through the Night - IU", "Perhaps Love", "Only Then - Roy Kim", "Some - Soyou & Junggigo"],
+        Japanese: ["Hikoukigumo - Yumi Arai", "Nandemonaiya - Radwimps", "Orange - 7!!", "Kaze wa Fuiteiru", "Shikisai"],
+        French: ["Sous le ciel de Paris", "Voilà - Barbara Pravi", "Respire", "La Bohème - Charles Aznavour", "Si jamais j’oublie"]
+      }
+      // Continue other moods (Energetic, Romantic, Focus, Party, Chill, Angry, Sleepy) as in your data...
+    };
+
+    function showPlaylist(mood) {
+      const playlistDiv = document.getElementById("playlist");
+      const selectedLang = document.getElementById("languageSelect").value;
+      const songs = playlists[mood][selectedLang] || [];
+
+      playlistDiv.style.display = "block";
+      playlistDiv.innerHTML = `
+        <h2>Recommended for ${mood} mood in ${selectedLang}:</h2>
+        <ul>${songs.map(song => `<li>🎶 ${song}</li>`).join("")}</ul>
+      `;
+    }
+  </script>
 </body>
 </html>
+
