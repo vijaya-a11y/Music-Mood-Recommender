@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Music Mood Recommender</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align:center; background:linear-gradient(135deg,#000,#121212); color:#fff; margin:0; padding:20px; }
+    h1 { color:#1db954; margin-bottom:18px; }
+    .controls { margin:16px 0; }
+    select { padding:8px 12px; border-radius:6px; border:none; font-size:15px; }
+    .mood-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:18px; margin-top:18px; }
+    .mood { background:linear-gradient(135deg,#222,#111); padding:14px; border-radius:12px; cursor:pointer; transition:transform .18s ease, box-shadow .18s ease; display:flex; flex-direction:column; align-items:center; }
+    .mood:hover { transform:scale(1.06); box-shadow:0 10px 24px rgba(0,0,0,.6); }
+    .mood img { width:72px; height:72px; object-fit:cover; border-radius:10px; margin-bottom:8px; border:2px solid rgba(255,255,255,.12); }
+    .playlist-box { margin-top:22px; padding:18px; background:#181818; border-radius:12px; display:none; text-align:left; max-width:760px; margin-left:auto; margin-right:auto; box-shadow:0 8px 28px rgba(0,0,0,.6); }
+    .playlist-box h2 { color:#1db954; margin:0 0 10px 0; }
+    .playlist-box ul { list-style:none; padding:0; margin:0; }
+    .playlist-box li { padding:8px 6px; border-bottom:1px solid #2b2b2b; font-size:15px; }
+    @media (max-width:420px){ .mood img{ width:60px; height:60px;} }
+  </style>
+</head>
+<body>
+  <h1>🎶 Music Mood Recommender</h1>
+
+  <div class="controls">
+    <label for="languageSelect"><strong>Choose Language:</strong></label>
+    <select id="languageSelect">
+      <option value="English">English</option>
+      <option value="Hindi">Hindi</option>
+      <option value="Telugu">Telugu</option>
+      <option value="Tamil">Tamil</option>
+      <option value="Spanish">Spanish</option>
+      <option value="Korean">Korean</option>
+      <option value="Japanese">Japanese</option>
+      <option value="French">French</option>
+    </select>
+  </div>
+
+  <div class="mood-grid">
+    <div class="mood" onclick="showPlaylist('Happy')">
+      <img src="https://img.icons8.com/color/96/000000/happy.png" alt="Happy">
+      <div>Happy</div>
+    </div>
+    <div class="mood" onclick="showPlaylist('Sad')">
+      <img src="https://img.icons8.com/color/96/000000/crying.png" alt="Sad">
+      <div>Sad</div>
+    </div>
+    <div class="mood" onclick="showPlaylist('Relax')">
+      <img src="https://img.icons8.com/color/96/000000/meditation.png" alt="Relax">
+      <div>Relax</div>
+    </div>
+    <div class="mood" onclick="showPlaylist('Energetic')">
+      <img src="https://img.icons8.com/color/96/000000/flash-on.png" alt="Energetic">
+      <div>Energetic</div>
+    </div>
+    <div class="mood" onclick="showPlaylist('Romantic')">
+      <img src="https://img.icons8.com/color/96/000000/like--v1.png" alt="Romantic">
+      <div>Romantic</div>
+    </div>
+    <div class="mood" onclick="showPlaylist('Focus')">
+      <img src="https://img.icons8.com/color/96/000000/concentration.png" alt="Focus">
+      <div>Focus</div>
+    </div>
+    <div class="mood" onclick="showPlaylist('Party')">
+      <img src="https://img.icons8.com/color/96/000000/party-popper.png" alt="Party">
+      <div>Party</div>
+    </div>
+    <div class="mood" onclick="showPlaylist('Chill')">
+      <img src="https://img.icons8.com/color/96/000000/cold.png" alt="Chill">
+      <div>Chill</div>
+    </div>
+    <div class="mood" onclick="showPlaylist('Sleepy')">
+      <img src="https://img.icons8.com/color/96/000000/sleeping.png" alt="Sleepy">
+      <div>Sleepy</div>
+    </div>
+    <div class="mood" onclick="showPlaylist('Angry')">
+      <img src="https://img.icons8.com/color/96/000000/angry.png" alt="Angry">
+      <div>Angry</div>
+    </div>
+  </div>
+
+  <div id="playlist" class="playlist-box" aria-live="polite"></div>
+
+  <script>
+    const playlists = {
+      Happy: {
+        English: ["Happy - Pharrell Williams","Can’t Stop The Feeling - Justin Timberlake","Best Day Of My Life - American Authors","Walking On Sunshine - Katrina & The Waves","Shake It Off - Taylor Swift","Sugar - Maroon 5","I Gotta Feeling - Black Eyed Peas","On Top Of The World - Imagine Dragons","Good Life - OneRepublic","Firework - Katy Perry"],
+        Hindi: ["Gallan Goodiyan","Kar Gayi Chull","Badtameez Dil","London Thumakda","Nashe Si Chadh Gayi","Kala Chashma","Bom Diggy","The Disco Song","Ainvayi Ainvayi","Dil Dhadakne Do"],
+        Telugu: ["Butta Bomma","Ramuloo Ramulaa","Mind Block","Seeti Maar","Top Lesi Poddi","Jigelu Rani","Blockbuster","Swing Zara","Vachinde","Cinema Choopistha Mava"],
+        Tamil: ["Vaathi Coming","Why This Kolaveri Di","Aaluma Doluma","Sodakku","Selfie Pulla","Marana Mass","Jimikki Kammal","Danga Maari Oodhari","Google Google","Otha Sollaala"],
+        Spanish: ["Vivir Mi Vida - Marc Anthony","Bailando - Enrique Iglesias","Despacito - Luis Fonsi","Danza Kuduro - Don Omar","La Bicicleta - Shakira & Carlos Vives","Súbeme La Radio - Enrique Iglesias","Mi Gente - J Balvin","Taki Taki - DJ Snake","Con Calma - Daddy Yankee","Felices los 4 - Maluma"],
+        Korean: ["Dynamite - BTS","Butter - BTS","Boy With Luv - BTS ft. Halsey","Gangnam Style - PSY","Cheer Up - TWICE","Likey - TWICE","DDU-DU DDU-DU - BLACKPINK","Fantastic Baby - BIGBANG","Energetic - Wanna One","Dalla Dalla - ITZY"],
+        Japanese: ["Paprika - Foorin","Heavy Rotation - AKB48","Blue Bird - Ikimono Gakari","Koi - Gen Hoshino","Pretender - Official HIGE DANDism","Sekai ni Hitotsu Dake no Hana - SMAP","Zenzenzense - RADWIMPS","Lemon - Kenshi Yonezu","Sugar Song and Bitter Step - UNISON SQUARE GARDEN","Hikaru Nara - Goose house"],
+        French: ["Alors on danse - Stromae","Dernière danse - Indila","Papaoutai - Stromae","Je veux - Zaz","Formidable - Stromae","Moi... Lolita - Alizée","La Vie en Rose - Édith Piaf","Sous le vent - Garou & Céline Dion","Je te donne - Jean-Jacques Goldman","On s'en va - Vianney"]
+      },
+
+      Sad: {
+        English: ["Someone Like You - Adele","Fix You - Coldplay","Let Her Go - Passenger","Stay With Me - Sam Smith","Say Something - A Great Big World","All I Want - Kodaline","Jealous - Labrinth","Back to December - Taylor Swift","Tears Dry On Their Own - Amy Winehouse","Un-break My Heart - Toni Braxton"],
+        Hindi: ["Channa Mereya","Agar Tum Saath Ho","Kabira (Reprise)","Tadap Tadap","Phir Le Aya Dil","Bhula Dena","Tujhe Kitna Chahne Lage","Tum Hi Ho","Kal Ho Naa Ho (sad version)","Dil Ke Armaan"],
+        Telugu: ["Kalusukovalani","Em Sandeham Ledu","Nee Kallalona","Ninne Pelladatha (sad)","Vellipomaakey","Oohalu Gusagusalaade","Kanulanu Thaake","Evaro Evaro","Inkem Inkem Inkem Kaavaale","Nuvvu Nenu"],
+        Tamil: ["Munbe Vaa","Suttrum Vizhi","Vaseegara","Ennadi Maayavi Nee","Pookkal Pookkum","Unakkenna Venum Sollu","Anbil Avan","Kadhalin Deepam","Thendral Vanthu","Nenjukkul Peidhidum"],
+        Spanish: ["Amor Eterno - Rocío Dúrcal","El Perdón - Nicky Jam & Enrique Iglesias","Si Tú No Estás - Rosana","Tú - Shakira","Corazón Partío - Alejandro Sanz","Causa y Efecto - Paulina Rubio","Vuelves - Sweet California","La Bicicleta (acoustic feel)","Recuérdame - Natalia Lafourcade","Amarte es un Placer - Luis Miguel"],
+        Korean: ["Spring Day - BTS","Eyes, Nose, Lips - Taeyang","Lonely - 2NE1","Stay With Me - Chanyeol & Punch","Beautiful - Crush","Through the Night - IU","Only Then - Roy Kim","Ending Scene - IU","I Will Go to You Like the First Snow - Ailee","It's You - Henry"],
+        Japanese: ["First Love - Utada Hikaru","Lemon - Kenshi Yonezu","Konayuki - Remioromen","Secret Base - Zone","Goodbye Days - YUI","Chiisana Koi no Uta - Mongol800","Sayonara Daisuki na Hito - Hana*Hana","Fragile - Every Little Thing","Orion - Kenshi Yonezu","Anata - Utada Hikaru"],
+        French: ["Ne me quitte pas - Jacques Brel","Je suis malade - Serge Lama","Pour que tu m'aimes encore - Céline Dion","Hurt - Johnny Hallyday (cover)","Ainsi soit-il - Calogero","L'envie d'aimer - Daniel Lévi","Adieu - Coeur de Pirate","Tous les mêmes - Stromae","Je vole - Louane","Si jamais j'oublie - Zaz"]
+      },
+
+      Relax: {
+        English: ["Weightless - Marconi Union","River Flows In You - Yiruma","Bloom - The Paper Kites","Banana Pancakes - Jack Johnson","Holocene - Bon Iver","Sunset Lover - Petit Biscuit","Somewhere Only We Know - Keane","Slow Dancing in a Burning Room - John Mayer","The Night We Met - Lord Huron","Let Her Go - Passenger"],
+        Hindi: ["Tum Mile (Love Reprise)","Kaise Hua","Hasi Ban Gaye","Phir Le Aya Dil (reprise)","Jeene Laga Hoon","Iktara","Kun Faya Kun","Saibo","Kabhi Kabhi Aditi","Pee Loon (soft)"],
+        Telugu: ["Kanulanu Thaake (soft)","O Cheliya","Pachani Chiluka","Pranam - soft","Akasam","Anaganaga","Chinukulanni","Oka Maru (mellow)","Manohara (soft)","Snehamera Jeevitam"],
+        Tamil: ["Anbil Avan","Pookkal Pookkum (soft)","En Iniya Pon Nilave","Munbe Vaa (soft)","Vinnaithaandi Varuvaayaa (calm tracks)","Thendral Vanthu Ennai","Aararo Aariraro","Uyire Uyire","Vaseegara (soft)","Anbe En Anbe"],
+        Spanish: ["Besame Mucho - Trio","La Playa - La Oreja de Van Gogh","Sabor a Mi - Los Panchos","Mediterráneo - Joan Manuel Serrat","Un Año - Sebastian Yatra","Agua - Jarabe de Palo","Por Amarte Asi - Cristian Castro (soft)","Vuelvo a Nacer - Carlos Vives (calm)","Nada Valgo Sin Tu Amor - Juanes","Ojos Españoles - traditional feel"],
+        Korean: ["Through The Night - IU","Love Poem - IU","River Flows In You - Yiruma","Only Then - Roy Kim","Some - Junggigo & Soyou","Breathe - Lee Hi","Perhaps Love - Howl & J","Wind - Jung Yong-hwa","Like A Star - Taeyeon (soft)","Story of Someone I Know - Yoona"],
+        Japanese: ["One Summer's Day - Joe Hisaishi","Summer - Joe Hisaishi","Hikoukigumo - Yumi Arai","Nandemonaiya - Radwimps","Orange - 7!!","Planetarium - Ai Otsuka","Merry Christmas Mr. Lawrence - Ryuichi Sakamoto","Shiki no Uta - Minmi","Kataomoi - Aimer","Good Night - RADWIMPS"],
+        French: ["La Vie en Rose - Édith Piaf","Sous le ciel de Paris - Yves Montand","Comptine d'un autre été - Yann Tiersen","La Bohème - Charles Aznavour","Respire - Mickey 3D","Je Vole - Louane (soft)","Ne Me Quitte Pas - Jacques Brel (soft)","Mon Pays - Claude François","La Mer - Charles Trenet","Le Sud - Nino Ferrer"]
+      },
+
+      Energetic: {
+        English: ["Uptown Funk - Bruno Mars","Can't Hold Us - Macklemore & Ryan Lewis","Stronger - Kanye West","Don't Stop Me Now - Queen","Titanium - David Guetta ft. Sia","Turn Down For What - DJ Snake & Lil Jon","Let's Go - Calvin Harris","Pump It - Black Eyed Peas","Shake It - Metro Station","Eye of the Tiger - Survivor"],
+        Hindi: ["Malhari","Zingaat","Kala Chashma","Aala Re Aala","Badtameez Dil","Ainvayi Ainvayi","Chikni Chameli","Swag Se Swagat","Ghoomar (fast)","Saddi Gali (remix)"],
+        Telugu: ["Top Lesi Poddi","Butta Bomma (remix)","Blockbuster","Pakka Local","Ramuloo Ramulaa (party)","Seeti Maar (fast mix)","Swing Zara","Dhinka Chika","Jigelu Rani (energetic)","Cinema Choopistha Mava (fast)"],
+        Tamil: ["Aaluma Doluma","Vaathi Coming","Sodakku","Marana Mass","Danga Maari Oodhari","Surviva","Petta Paraak","Otha Sollaala (remix)","Udhungada Sangu","Kutti Story (energetic remix)"],
+        Spanish: ["La Gasolina - Daddy Yankee","Danza Kuduro - Don Omar","Taki Taki - DJ Snake","Con Calma - Daddy Yankee","Baila Baila Baila - Ozuna","Mi Gente - J Balvin","Dákiti - Bad Bunny","Despacito (remix)","El Perdón (dance remix)","Felices los 4 - Maluma"],
+        Korean: ["Bang Bang Bang - BIGBANG","Fire - BTS","Mic Drop - BTS","Fantastic Baby - BIGBANG","Boombayah - BLACKPINK","IDOL - BTS","Energetic - Wanna One","Kick It - NCT 127","Hot Sauce - NCT Dream","Zimzalabim - Red Velvet"],
+        Japanese: ["Gurenge - LiSA","Red Swan - Yoshiki","Unravel - TK from Ling Tosite Sigure","Butter-Fly - Koji Wada","Cha-La Head-Cha-La - Hironobu Kageyama","Polyrhythm - Perfume","Sugar Song and Bitter Step","Driver's High - L'Arc~en~Ciel","Blue Bird (upbeat)","Sign - Mr.Children"],
+        French: ["Alors on danse - Stromae","Papaoutai - Stromae","Bella - Maître Gims","Sapés comme jamais - Maître Gims","J'ai cherché - Amir","Balance ton quoi - Angèle","Dingue - Naza","Le coach - Soprano","On s'en va - Vianney","Tomber" ]
+      },
+
+      Romantic: {
+        English: ["Perfect - Ed Sheeran","All of Me - John Legend","Thinking Out Loud - Ed Sheeran","Just The Way You Are - Bruno Mars","A Thousand Years - Christina Perri","Make You Feel My Love - Adele","Wonderful Tonight - Eric Clapton","My Heart Will Go On - Celine Dion","You Are The Best Thing - Ray LaMontagne","Unchained Melody - Righteous Brothers"],
+        Hindi: ["Tum Hi Ho","Raabta","Pee Loon","Janam Janam","Tujh Mein Rab Dikhta Hai","Jeene Laga Hoon","Tu Jaane Na","Tum Se Hi","Tera Ban Jaunga","Dil Diyan Gallan"],
+        Telugu: ["Kalusukovalani","Nuvvu Nenu","Tholi Prema","Oka Maro","Priya Priya","Cheppave Chirugali","Ninne Pelladatha (romantic)","Manasuna Manasuna","Inkem Inkem","Ninne Kori"],
+        Tamil: ["Unakkenna Venum Sollu","Anbil Avan","Munbe Vaa","Kanave Kanave","Suttrum Vizhi","Ennai Thalatta Varuvala","Vinnaithaandi Varuvaayaa (love)","Paartha Nyabagam","Adiye","Kannaana Kanney"],
+        Spanish: ["Te Amo - Franco De Vita","Eres - Café Tacvba","Contigo Aprendí - Armando Manzanero","Colgando en tus manos - Carlos Baute","No Me Doy por Vencido - Luis Fonsi","Por Amarte - Enrique Iglesias","Cuando Me Enamoro - Enrique Iglesias","Solamente Tú - Pablo Alborán","Amor Eterno","Fotografía - Juanes"],
+        Korean: ["Love Scenario - iKON","Everytime - Chen & Punch","Beautiful - Crush","Sweet Night - V","Stay With Me - Chanyeol & Punch","My Everything - NCT","Perhaps Love - Howl & J","I Will Go To You Like The First Snow - Ailee","The Day - DAY6","You Are My Everything - GUMMY"],
+        Japanese: ["Koi - Gen Hoshino","Marigold - Aimyon","Love Story - Namie Amuro","Flavor Of Life - Utada Hikaru","Ai Oboete Imasuka","Sukiyaki - Kyu Sakamoto","One More Time, One More Chance","First Love - Utada Hikaru","Kataomoi - Aimer","Hana"],
+        French: ["Pour que tu m'aimes encore - Céline Dion","Je t'aime - Lara Fabian","Aimer à perdre la raison - Jean Ferrat","Parler à mon père - Céline Dion","La Vie en Rose - Édith Piaf","Je te promets - Johnny Hallyday","Quand on n'a que l'amour - Jacques Brel","L'Hymne à l'amour - Édith Piaf","Ne me quitte pas - Jacques Brel","Et si tu n'existais pas - Joe Dassin"]
+      },
+
+      Focus: {
+        English: ["Time - Hans Zimmer","Clair de Lune - Claude Debussy","Nuvole Bianche - Ludovico Einaudi","Experience - Ludovico Einaudi","River Flows In You - Yiruma","Gymnopédie No.1 - Erik Satie","Canon in D - Pachelbel","Comptine d'un autre été - Yann Tiersen","Spiegel im Spiegel - Arvo Pärt","Opus 55 - Chopin"],
+        Hindi: ["Kal Ho Naa Ho (Instrumental)","Luka Chuppi (Piano)","Kabira (Instrumental)","Tujh Mein Rab Dikhta Hai (Soft)","Chale Chalo (Instrumental)","Pehla Nasha (Soft)","Kun Faya Kun (Instrumental)","Saathiya (Instrumental)","Agar Tum Saath Ho (Instrumental)","Aashayein (Instrumental)"],
+        Telugu: ["Madhura Madhura (Instrumental)","Kanulanu Thaake (Piano)","Chinukulanni (Soft)","Aakasam (Instrumental)","Nuvvostanante (Soft)","Pranam (Instrumental)","O Cheliya (Piano)","Kalusukovalani (Instrumental)","Manohara (Soft)","Neeve (Acoustic)"],
+        Tamil: ["Pookkal Pookkum (Instrumental)","Vinnaithaandi Varuvaayaa (Theme)","Ennavale (Piano)","Munbe Vaa (Soft)","New York Nagaram (Instrumental)","Anbil Avan (Instrumental)","Kaadhal Sadugudu (Soft)","Puthiya Vaanam (Calm)","Suttrum Vizhi (Soft)","Ilamai Idho Idho (Calm)"],
+        Spanish: ["Adiós Nonino (Instrumental)","Classical Guitar - Spanish Pieces","Comptine d'un autre été (Piano)","Recuerdos de la Alhambra","Instrumental Flamenco","Mediterráneo (Soft)","Nada Valgo Sin Tu Amor (Soft)","Bésame Mucho (Instrumental)","Suite Española (Soft)","La Cumparsita (Instrumental)"],
+        Korean: ["River Flows In You - Yiruma","Kiss The Rain - Yiruma","Polaris (Instrumental)","Stay Gold (Soft)","Piano Ballads - Korean","OST Instrumentals - Calm","Through The Night (Instrumental)","Only Then (Instrumental)","Fairy Tale (Soft)","Autumn Leaves - Instrumental"],
+        Japanese: ["One Summer's Day - Joe Hisaishi","Merry Christmas Mr. Lawrence - Ryuichi Sakamoto","Path of the Wind - Joe Hisaishi","Comptine d'un autre été","Summer - Joe Hisaishi","Ghibli Piano Collection","Na mo naki uta (soft)","Hana - Ryuichi Sakamoto","Kaze wa Fuiteiru (Soft)","Shikisai (Soft)"],
+        French: ["Gymnopédie No.1 - Erik Satie","Clair de Lune - Debussy","Comptine d'un autre été","La Valse d'Amélie - Yann Tiersen","Ballade pour Adeline - Richard Clayderman","Piano classique - French artists","Instrumental cafe music - French","Soft accordion - mellow","Minimal piano - French artists","Sous le ciel de Paris (Soft)"]
+      },
+
+      Party: {
+        English: ["Party Rock Anthem - LMFAO","Yeah! - Usher","I Gotta Feeling - Black Eyed Peas","Don't Stop The Music - Rihanna","Turn Down For What - DJ Snake & Lil Jon","Get Lucky - Daft Punk","Timber - Pitbull","Levels - Avicii","We Found Love - Rihanna","Tremor - Dimitri Vegas"],
+        Hindi: ["Abhi Toh Party Shuru Hui Hai","Saturday Saturday","Nashe Si Chadh Gayi","Angreji Beat","Kala Chashma","Bom Diggy","Tamma Tamma Again","Ainvayi Ainvayi","Dilbar (Remix)","London Thumakda (Party)"],
+        Telugu: ["Swing Zara","Gudilo Badilo","Top Lesi Poddi","Butta Bomma (Remix)","Blockbuster","Cinema Choopistha Mava (Party)","Ramuloo Ramulaa (Party)","Seeti Maar (Club)","Jai Lava Kusa (Dance)","Pakka Local (Party)"],
+        Tamil: ["Vaathi Coming","Selfie Pulla","Google Google","Aaluma Doluma","Danga Maari","Marana Mass","Sodakku","Surviva (Party)","Petta Paraak","Otha Sollaala (Remix)"],
+        Spanish: ["Danza Kuduro - Don Omar","Taki Taki - DJ Snake","Despacito (Remix)","Bailando - Enrique Iglesias","Mi Gente - J Balvin","Dákiti - Bad Bunny","La Bicicleta (Party)","Con Calma - Daddy Yankee","Felices los 4 - Maluma","Súbeme La Radio"],
+        Korean: ["Fantastic Baby - BIGBANG","Bang Bang Bang - BIGBANG","Boombayah - BLACKPINK","IDOL - BTS","Zimzalabim - Red Velvet","Uptown Funk (K-pop cover)","I LUV IT - PSY","Ddu-Du Ddu-Du - BLACKPINK","Kick It - NCT 127","Hot Sauce - NCT Dream"],
+        Japanese: ["Polyrhythm - Perfume","Heavy Rotation - AKB48 (Party)","Sugar Song and Bitter Step","Love Machine - Morning Musume","Blue Bird (Remix)","Ultra Soul - B'z","Gimme Chocolate!! - BABYMETAL","One More Time (Remix)","Natsu Matsuri","Party All Night"],
+        French: ["Alors on danse - Stromae","Papaoutai - Stromae (Club)","Bella - Maître Gims","Le coach - Soprano","Tomber (Club)","Je cherche (Remix)","Balance Ton Quoi (Dance)","Sapés comme jamais","La même - Maître Gims","On s'fait du bien"]
+      },
+
+      Chill: {
+        English: ["Sunflower - Post Malone & Swae Lee","Location - Khalid","Lovely - Billie Eilish","Peaches - Justin Bieber","Better - Khalid","Riptide - Vance Joy","Lost - Frank Ocean","Holocene - Bon Iver","Slow Dancing In A Burning Room - John Mayer","Electric Feel - MGMT"],
+        Hindi: ["Phir Le Aya Dil (Soft)","Tum Se Hi (Mellow)","Kun Faya Kun (Soft)","Saibo","Pee Loon (Soft)","Muskurane","Agar Tum Saath Ho (Soft)","Raabta (Soft)","Teri Ore","Kabhi Jo Baadal Barse"],
+        Telugu: ["O Cheliya","Manohara (Mellow)","Kanulanu Thaake","Prema Oka Maikam","Yemito","Ee Hrudayam","Chinukulanni (Soft)","Kalusukovalani (Soft)","Nuvvostanante (Mellow)","Ninne Kori (Soft)"],
+        Tamil: ["Vinnaithaandi Varuvaayaa (Soft)","Pookkal Pookkum","Anbil Avan (Mellow)","Ennavale","Oru Naalil","Uyire Uyire","Munbe Vaa (Soft)","Thendral Vanthu","Kannathil Muthamittal (Melodic)","Kaatrin Mozhi (Soft)"],
+        Spanish: ["Fotografía - Juanes","Mi Historia Entre Tus Dedos","Ojos Españoles","Burbujas de Amor - Juan Luis Guerra","Nada Valgo Sin Tu Amor - Juanes","Solamente Tú - Pablo Alborán","A Dios le Pido - Juanes","Contigo - Joaquin Sabina","Te Vi - Piso 21","Eres - Café Tacvba"],
+        Korean: ["Breathe - Lee Hi","Through The Night - IU","Love Poem - IU","Palette - IU","Some - Junggigo & Soyou","Sea - BTS (Soft)","The Truth Untold - BTS (Soft)","Wind - Jung Yong Hwa","If You - BigBang (Soft)","Missing You - BTOB (Soft)"],
+        Japanese: ["Orange - 7!!","Nandemonaiya - Radwimps","Kataomoi - Aimer","Planetarium - Ai Otsuka","One Summer's Day - Joe Hisaishi","Hana - Ryuichi Sakamoto","Merry Christmas Mr. Lawrence","Shikisai - Yuzu","Sakura - Ikimono Gakari","Ano Hi no Kimi e"],
+        French: ["Je Vole - Louane","La Vie en Rose (Soft)","Respire","Sous le ciel de Paris (Soft)","Ne me quitte pas (Soft)","Je suis malade (Soft)","La Mer - Charles Trenet","Comptine d'un autre été","Petite Marie - Francis Cabrel","Elle me dit (Mellow)"]
+      },
+
+      Angry: {
+        English: ["Killing In The Name - Rage Against The Machine","In The End - Linkin Park","Break Stuff - Limp Bizkit","Numb - Linkin Park","Duality - Slipknot","Bodies - Drowning Pool","Chop Suey! - System Of A Down","Given Up - Linkin Park","Smells Like Teen Spirit - Nirvana","Down With The Sickness - Disturbed"],
+        Hindi: ["Bhaag DK Bose (angry tone)","Sher Aaya Sher","Azaadi (intense)","Satya (gritty)","Zinda (angry)","Dum Maaro Dum (remix)","Roobaroo (intense)","Halla Bol (intense)","Rang De Basanti (punk)","Goli Mar (angry)"],
+        Telugu: ["Sye Fight Theme","Ranga Ranga (fight)","Rowdy Baby (angry mix)","Pakka Local (energetic angry)","Top Lesi Poddi (intense)","Jigelu Rani (remix)","Blockbuster (thrash)","Mass Songs Mashup","Rana Theme (angry)","Khaidi No 150 Mix"],
+        Tamil: ["Aaluma Doluma (heavy)","Sodakku (intense)","Marana Mass (pump)","Otha Sollaala (intense)","Surviva (energetic angry)","Theri Theme (fight)","Petta Paraak (forceful)","Kaala Theme","Vettaiyan (intense)","Anniyan Theme"],
+        Spanish: ["Rock en Español - Rage covers","Malamente - Rosalía (hard parts)","Punk Español - aggressive","Rap Combativo - Spanish Rap","La Gasolina (hard remix)","Cumbia Villera (angry)","Banda Intensa","Metal en Español - heavy","Reggaeton furioso","Barrio War Mix"],
+        Korean: ["Fire - BTS","Bang Bang Bang - BIGBANG","Mic Drop - BTS","War of Hormone - BTS (angry energy)","Fight Song - K-pop versions","SHINE - Pentagon (angry)","God's Menu - Stray Kids","Miroh - Stray Kids","B.A.P - Warrior","NOIR - Sunmi (intense)"],
+        Japanese: ["Unravel - TK from Ling Tosite Sigure (intense)","Guren no Yumiya - Linked Horizon","The Beginning - ONE OK ROCK","Killing Me - RIZE","Inferno - Mrs. GREEN APPLE","Driver's High - L'Arc~en~Ciel","Silhouette (rock)","RAGE OF DUST - Linked Horizon","MY DEAREST - super intense","ROCK ANTHEM (various)"],
+        French: ["Rap Français - engagé","Punk Français - aggressive","Rock alternatif - French bands","La Rage - French rap","Force - power tracks","Battant - energetic","Révolte - French rock","Hardcore Français","Metal Français - heavy","Chanson combative (various)"]
+      },
+
+      Sleepy: {
+        English: ["Lullaby - Sia","River Flows In You - Yiruma","Holocene - Bon Iver","Skinny Love - Bon Iver","To Build A Home - The Cinematic Orchestra","Night Owl - Galimatias","Falling Slowly - Glen Hansard","Slow Dancing in a Burning Room (soft)","All I Want - Kodaline","Sea of Love - Cat Power"],
+        Hindi: ["Khamoshiyan (soft)","Raabta (night)","Saathiya (soft)","Tu Jaane Na (mellow)","Iktara (soft)","Pal - KK (soft)","Phir Le Aya Dil (soft)","Kaise Hua (soft)","Lagan Lagi Re (soft)","Suhaana Safar (soft)"],
+        Telugu: ["Jagadananda Karaka (soft)","Nuvve Nuvve (soft)","Kalusukovalani (soft)","Chinukulu (lullaby)","Neeve Neeve (soft)","Sogase Unte (soft)","Priya Priya (lullaby)","O Cheliya (soft)","Paataku Pranam (soft)","Manasuna Manasuna (soft)"],
+        Tamil: ["Pudhu Metro Rail (soft)","Uyire Uyire (soft)","Thuli Thuli (soft)","Munbe Vaa (soft)","Vinnaithaandi Varuvaayaa (soft)","Pookkal Pookkum (soft)","En Iniya Pon Nilave (soft)","Nenjukkul Peidhidum (mellow)","Vaa Vennila - lullaby","Kannathil Muthamittal (soft)"],
+        Spanish: ["Alfonsina y el mar","Dormir Contigo","Recuérdame (soft)","Por Ti Volaré (soft)","Nana - lullaby","Cielito Lindo (soft)","Tonada de Luna Llena","La Llorona (soft)","Arboles de la Calle","El Sol No Regresa (soft)"],
+        Korean: ["Through The Night - IU","Breathe - Lee Hi","Only Then - Roy Kim","Sea - BTS (soft)","The Truth Untold - BTS","My Sea - IU","Good Night - IU","Missing You - BTOB (soft)","Dream - Suho (soft)","Sleepyhead - Seo Taiji (soft)"],
+        Japanese: ["One Summer's Day - Joe Hisaishi","Merry Christmas Mr. Lawrence - Ryuichi Sakamoto","Hikoukigumo - Yumi Arai","Nandemonaiya (soft)","Shikisai - Yuzu","Kimi no Na wa OST - calm","Anata - Utada (soft)","Good Night - RADWIMPS","Sakura - traditional lullaby","Song of the Sea - Japanese lullaby"],
+        French: ["Douce France - Charles Trenet (soft)","Ne me quitte pas (gentle)","La Vie en Rose (gentle)","Berceuse - Debussy (instrumental)","Bonne Nuit - lullaby","Nuit étoilée - mellow","Je te promets (soft)","Mon Amant de Saint-Jean (soft)","Chanson douce - soothing","Dors mon enfant - lullaby"]
+      }
+    };
+
+    function showPlaylist(mood) {
+      const lang = document.getElementById('languageSelect').value;
+      const playlistDiv = document.getElementById('playlist');
+      if (!playlists[mood] || !playlists[mood][lang]) {
+        playlistDiv.style.display = 'block';
+        playlistDiv.innerHTML = `<h2>${mood} — ${lang}</h2><p>No songs found for this mood/language.</p>`;
+        return;
+      }
+      const songs = playlists[mood][lang];
+      playlistDiv.style.display = 'block';
+      playlistDiv.innerHTML = `<h2>${mood} Playlist — ${lang}</h2><ul>${songs.map(s => `<li>${s}</li>`).join('')}</ul>`;
+      playlistDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  </script>
+</body>
+</html>
